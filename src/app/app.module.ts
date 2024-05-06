@@ -24,6 +24,6 @@ import { RegisterComponent } from './register/register.component';
     BrowserModule
   ],
   providers: [],
-  bootstrap: [LoginComponent]
+  bootstrap: [RegisterComponent]
 })
 export class AppModule { }
