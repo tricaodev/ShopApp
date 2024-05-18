@@ -6,7 +6,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-@Entity
 @Data
 public class BaseEntity {
     @Column(name = "created_at")

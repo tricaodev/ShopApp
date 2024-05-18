@@ -36,7 +36,8 @@ public class Order {
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
-    private OrderStatus status;
+    @Column(nullable = false)
+    private String status;
 
     @Column(name = "total_money")
     private Float totalMoney;
