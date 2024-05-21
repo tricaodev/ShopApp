@@ -1,9 +1,15 @@
 package com.project.shopapp.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "products")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
