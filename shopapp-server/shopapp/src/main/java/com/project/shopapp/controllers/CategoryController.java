@@ -23,8 +23,7 @@ public class CategoryController {
             List<String> errorMessage = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
             return ResponseEntity.badRequest().body(errorMessage);
         }
-        Category category = Category.builder().name(categoryDto.getName()).build();
-        categoryService.createCategory(category);
+        categoryService.createCategory(categoryDto);
         return ResponseEntity.ok("Insert category successfully!");
     }
 
@@ -36,8 +35,7 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateCategory(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
-        Category category = Category.builder().name(categoryDto.getName()).build();
-        categoryService.updateCategory(id, category);
+        categoryService.updateCategory(id, categoryDto);
         return ResponseEntity.ok("Update category successfully!");
     }
 
