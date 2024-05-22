@@ -1,7 +1,7 @@
 package com.project.shopapp.services;
 
 import com.project.shopapp.models.Category;
-import com.project.shopapp.repositories.CategoryRepository;
+import com.project.shopapp.repositories.ICategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CategoryService implements ICategoryService {
-    private final CategoryRepository categoryRepository;
+    private final ICategoryRepository categoryRepository;
     @Override
     public Category createCategory(Category category) {
         return categoryRepository.save(category);
