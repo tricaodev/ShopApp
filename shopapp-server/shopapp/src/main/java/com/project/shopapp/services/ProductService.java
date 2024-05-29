@@ -70,7 +70,7 @@ public class ProductService implements IProductService{
     }
 
     @Override
-    public ProductImage createProductImage(long productId, ProductImageDto productImageDto) throws Exception {
+    public ProductImage createProductImage(Long productId, ProductImageDto productImageDto) throws Exception {
         Product existsProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new DataNotFoundException("Cannot find product with id: " + productId));
         ProductImage newProductImage = ProductImage.builder()

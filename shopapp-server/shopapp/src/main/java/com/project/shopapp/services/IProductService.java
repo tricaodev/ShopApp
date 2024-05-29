@@ -20,5 +20,5 @@ public interface IProductService {
 
     boolean existsByName(String name);
 
-    ProductImage createProductImage(long productId, ProductImageDto productImageDto) throws Exception;
+    ProductImage createProductImage(Long productId, ProductImageDto productImageDto) throws Exception;
 }
