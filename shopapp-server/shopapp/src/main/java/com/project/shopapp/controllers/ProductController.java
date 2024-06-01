@@ -28,17 +28,30 @@ import java.util.UUID;
 @RequestMapping("${api.prefix}/products")
 @RequiredArgsConstructor
 public class ProductController {
+
     private final IProductService productService;
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createProduct(@Valid @ModelAttribute ProductDto productDto, BindingResult result) {
+
+    @PostMapping(value = "")
+    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDto productDto, BindingResult result) {
         try {
             if(result.hasErrors()) {
                 List<String> errorMessage = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
                 return ResponseEntity.badRequest().body(errorMessage);
             }
             Product newProduct = productService.createProduct(productDto);
-            List<MultipartFile> files = productDto.getFiles();
+            return ResponseEntity.ok(newProduct);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadImages(@ModelAttribute("files") List<MultipartFile> files, @PathVariable("id") Long productId) {
+        try {
+            Product existingProduct = productService.getProductById(productId);
             files = files == null ? new ArrayList<MultipartFile>() : files;
+            List<ProductImage> productImages = new ArrayList<>();
             for(MultipartFile file : files) {
                 if(file.getSize() == 0) continue;
                 if(file.getSize() > 10 * 1024 * 1024) {
@@ -50,19 +63,20 @@ public class ProductController {
                 }
                 String fileName = storeFile(file);
                 ProductImage newProductImage = productService.createProductImage(
-                        newProduct.getId(),
+                        existingProduct.getId(),
                         ProductImageDto.builder()
-                                .productId(newProduct.getId())
+                                .productId(existingProduct.getId())
                                 .imageUrl(fileName)
                                 .build()
                 );
+                productImages.add(newProductImage);
             }
-            return ResponseEntity.ok("Create successfully!");
-        }
-        catch (Exception e) {
+            return ResponseEntity.ok().body(productImages);
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     private String storeFile(MultipartFile file) throws IOException {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String newFileName = UUID.randomUUID().toString() + "_" + fileName;
@@ -74,14 +88,17 @@ public class ProductController {
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return newFileName;
     }
+
     @GetMapping("")
     public ResponseEntity<String> getProducts(@RequestParam("page") int page, @RequestParam("limit") int limit) {
         return ResponseEntity.ok("getProducts here");
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<String> getProductsById(@PathVariable("id") String productId) {
         return ResponseEntity.ok("Product with ID: " + productId);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProductById(@PathVariable long id) {
         return ResponseEntity.status(HttpStatus.OK).body(String.format("Product with id = %d deleted successfully", id));

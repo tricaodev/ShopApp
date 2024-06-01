@@ -23,14 +23,14 @@ public class ProductService implements IProductService{
     private final IProductImageRepository productImageRepository;
     @Override
     public Product createProduct(ProductDto productDto) throws Exception {
-        Category existsCategory = categoryRepository.findById(productDto.getCategoryId())
+        Category existingCategory = categoryRepository.findById(productDto.getCategoryId())
                 .orElseThrow(() -> new DataNotFoundException("Cannot find category with id: " + productDto.getCategoryId()));
         Product newProduct = Product.builder()
                 .name(productDto.getName())
                 .price(productDto.getPrice())
                 .thumbnail(productDto.getThumbnail())
                 .description(productDto.getDescription())
-                .category(existsCategory)
+                .category(existingCategory)
                 .build();
         return productRepository.save(newProduct);
     }
@@ -48,15 +48,15 @@ public class ProductService implements IProductService{
 
     @Override
     public Product updateProduct(long id, ProductDto productDto) throws Exception {
-        Category existsCategory = categoryRepository.findById(productDto.getCategoryId())
+        Category existingCategory = categoryRepository.findById(productDto.getCategoryId())
                 .orElseThrow(() -> new DataNotFoundException("Cannot find category with id: " + productDto.getCategoryId()));
-        Product existsProduct = getProductById(id);
-        existsProduct.setName(productDto.getName());
-        existsProduct.setPrice(productDto.getPrice());
-        existsProduct.setThumbnail(productDto.getThumbnail());
-        existsProduct.setDescription(productDto.getDescription());
-        existsProduct.setCategory(existsCategory);
-        return productRepository.save(existsProduct);
+        Product existingProduct = getProductById(id);
+        existingProduct.setName(productDto.getName());
+        existingProduct.setPrice(productDto.getPrice());
+        existingProduct.setThumbnail(productDto.getThumbnail());
+        existingProduct.setDescription(productDto.getDescription());
+        existingProduct.setCategory(existingCategory);
+        return productRepository.save(existingProduct);
     }
 
     @Override
@@ -71,10 +71,10 @@ public class ProductService implements IProductService{
 
     @Override
     public ProductImage createProductImage(Long productId, ProductImageDto productImageDto) throws Exception {
-        Product existsProduct = productRepository.findById(productId)
+        Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new DataNotFoundException("Cannot find product with id: " + productId));
         ProductImage newProductImage = ProductImage.builder()
-                .product(existsProduct)
+                .product(existingProduct)
                 .imageUrl(productImageDto.getImageUrl())
                 .build();
         int size = productImageRepository.findByProductId(productId).size();
