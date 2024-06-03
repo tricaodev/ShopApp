@@ -2,6 +2,7 @@ package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.ProductDto;
 import com.project.shopapp.dtos.ProductImageDto;
+import com.project.shopapp.exceptions.InvalidParamException;
 import com.project.shopapp.models.Product;
 import com.project.shopapp.models.ProductImage;
 import com.project.shopapp.services.IProductService;
@@ -51,6 +52,9 @@ public class ProductController {
         try {
             Product existingProduct = productService.getProductById(productId);
             files = files == null ? new ArrayList<MultipartFile>() : files;
+            if (files.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
+                return ResponseEntity.badRequest().body("You can only upload maximum 5 images");
+            }
             List<ProductImage> productImages = new ArrayList<>();
             for(MultipartFile file : files) {
                 if(file.getSize() == 0) continue;
@@ -78,6 +82,9 @@ public class ProductController {
     }
 
     private String storeFile(MultipartFile file) throws IOException {
+        if (file.getOriginalFilename() == null) {
+            throw new IOException("Invalid image format");
+        }
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String newFileName = UUID.randomUUID().toString() + "_" + fileName;
         Path uploadDir = Paths.get("uploads");
