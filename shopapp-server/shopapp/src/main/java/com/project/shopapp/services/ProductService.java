@@ -10,9 +10,10 @@ import com.project.shopapp.models.ProductImage;
 import com.project.shopapp.repositories.ICategoryRepository;
 import com.project.shopapp.repositories.IProductImageRepository;
 import com.project.shopapp.repositories.IProductRepository;
+import com.project.shopapp.responses.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -42,8 +43,20 @@ public class ProductService implements IProductService{
     }
 
     @Override
-    public Page<Product> getAllProducts(PageRequest pageRequest) {
-        return productRepository.findAll(pageRequest);
+    public Page<ProductResponse> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable).map(product -> {
+            ProductResponse productResponse = ProductResponse.builder()
+                    .id(product.getId())
+                    .name(product.getName())
+                    .price(product.getPrice())
+                    .thumbnail(product.getThumbnail())
+                    .description(product.getDescription())
+                    .categoryId(product.getCategory().getId())
+                    .build();
+            productResponse.setCreatedAt(product.getCreatedAt());
+            productResponse.setUpdatedAt(product.getUpdatedAt());
+            return productResponse;
+        });
     }
 
     @Override

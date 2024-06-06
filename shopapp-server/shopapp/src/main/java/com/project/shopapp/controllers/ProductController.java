@@ -2,12 +2,16 @@ package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.ProductDto;
 import com.project.shopapp.dtos.ProductImageDto;
-import com.project.shopapp.exceptions.InvalidParamException;
 import com.project.shopapp.models.Product;
 import com.project.shopapp.models.ProductImage;
+import com.project.shopapp.responses.ProductListResponse;
+import com.project.shopapp.responses.ProductResponse;
 import com.project.shopapp.services.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -97,8 +101,16 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public ResponseEntity<String> getProducts(@RequestParam("page") int page, @RequestParam("limit") int limit) {
-        return ResponseEntity.ok("getProducts here");
+    public ResponseEntity<ProductListResponse> getProducts(@RequestParam("page") int page, @RequestParam("limit") int limit) {
+        Page<ProductResponse> pageProduct = productService.getAllProducts(PageRequest.of(
+           page, limit, Sort.by("createdAt").descending()
+        ));
+        List<ProductResponse> products = pageProduct.getContent();
+        int totalPages = pageProduct.getTotalPages();
+        return ResponseEntity.ok(ProductListResponse.builder()
+                        .data(products)
+                        .totalPages(totalPages)
+                        .build());
     }
 
     @GetMapping("/{id}")
