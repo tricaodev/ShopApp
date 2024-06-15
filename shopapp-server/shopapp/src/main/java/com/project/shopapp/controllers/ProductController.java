@@ -2,10 +2,12 @@ package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.ProductDto;
 import com.project.shopapp.dtos.ProductImageDto;
+import com.project.shopapp.models.Category;
 import com.project.shopapp.models.Product;
 import com.project.shopapp.models.ProductImage;
 import com.project.shopapp.responses.ProductListResponse;
 import com.project.shopapp.responses.ProductResponse;
+import com.project.shopapp.services.ICategoryService;
 import com.project.shopapp.services.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -115,13 +117,29 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getProductsById(@PathVariable("id") String productId) {
-        return ResponseEntity.ok("Product with ID: " + productId);
+    public ResponseEntity<?> getProductById(@PathVariable("id") Long productId) {
+        try {
+            Product existingProduct = productService.getProductById(productId);
+            return ResponseEntity.ok(ProductResponse.fromProduct((existingProduct)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProductById(@PathVariable long id) {
+        productService.deleteProduct(id);
         return ResponseEntity.status(HttpStatus.OK).body(String.format("Product with id = %d deleted successfully", id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProductById(@PathVariable long id, @RequestBody @Valid ProductDto productDto) {
+        try {
+            Product updatedProduct = productService.updateProduct(id, productDto);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 //    @PostMapping("/generate-fake-products")
