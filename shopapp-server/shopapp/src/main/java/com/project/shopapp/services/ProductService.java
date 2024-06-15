@@ -46,7 +46,6 @@ public class ProductService implements IProductService{
     public Page<ProductResponse> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable).map(product -> {
             ProductResponse productResponse = ProductResponse.builder()
-                    .id(product.getId())
                     .name(product.getName())
                     .price(product.getPrice())
                     .thumbnail(product.getThumbnail())

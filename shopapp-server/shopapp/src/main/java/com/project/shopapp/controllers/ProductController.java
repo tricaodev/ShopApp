@@ -28,6 +28,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import com.github.javafaker.Faker;
 
 @RestController
 @RequestMapping("${api.prefix}/products")
@@ -121,5 +122,30 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProductById(@PathVariable long id) {
         return ResponseEntity.status(HttpStatus.OK).body(String.format("Product with id = %d deleted successfully", id));
+    }
+
+//    @PostMapping("/generate-fake-products")
+    private ResponseEntity<String> generateFakeProducts() {
+        Faker faker = new Faker();
+        for(int i = 0; i < 10000; i++) {
+            try {
+                String productName = faker.commerce().productName();
+                if(productService.existsByName(productName)) {
+                    continue;
+                }
+                ProductDto productDto = ProductDto.builder()
+                        .name(productName)
+                        .price((float) faker.number().numberBetween(0, 10000000))
+                        .thumbnail("")
+                        .description(faker.lorem().sentence())
+                        .categoryId((long) faker.number().numberBetween(1, 4))
+                        .build();
+                productService.createProduct(productDto);
+            }
+            catch (Exception e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+        }
+        return ResponseEntity.ok("Create fake data for Product table successfully!");
     }
 }

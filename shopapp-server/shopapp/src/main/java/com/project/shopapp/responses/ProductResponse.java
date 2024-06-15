@@ -7,8 +7,6 @@ import lombok.Getter;
 @Builder
 @Getter
 public class ProductResponse extends BaseResponse {
-    private Long id;
-
     private String name;
 
     private Float price;
