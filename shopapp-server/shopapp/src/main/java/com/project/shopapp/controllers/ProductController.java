@@ -128,8 +128,14 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProductById(@PathVariable long id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.status(HttpStatus.OK).body(String.format("Product with id = %d deleted successfully", id));
+        try {
+            productService.deleteProduct(id);
+            return ResponseEntity.status(HttpStatus.OK).body(String.format("Product with id = %d deleted successfully", id));
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 
     @PutMapping("/{id}")
