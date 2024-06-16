@@ -2,12 +2,10 @@ package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.ProductDto;
 import com.project.shopapp.dtos.ProductImageDto;
-import com.project.shopapp.models.Category;
 import com.project.shopapp.models.Product;
 import com.project.shopapp.models.ProductImage;
 import com.project.shopapp.responses.ProductListResponse;
 import com.project.shopapp.responses.ProductResponse;
-import com.project.shopapp.services.ICategoryService;
 import com.project.shopapp.services.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
